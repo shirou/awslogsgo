@@ -20,7 +20,7 @@ const (
 	dateLocal        = "2006-01-02"                    // RFC3339 with local timezone and time at 00:00:00
 )
 
-var relativeRe = regexp.MustCompile(`(\d+)\s?(m|minute|minutes|h|hour|hours|d|day|days|w|week|weeks)(?: ago)?`)
+var relativeRe = regexp.MustCompile(`(\d+)\s?(m|min|mins|minute|minutes|h|hour|hours|d|day|days|w|week|weeks)(?: ago)?`)
 
 func parseTime(value string) (time.Time, error) {
 	m := relativeRe.FindAllStringSubmatch(strings.TrimSpace(value), 1)
@@ -131,7 +131,7 @@ func parseRelativeTime(m []string, t time.Time) (time.Time, error) {
 	}
 	var d time.Duration
 	switch m[2] {
-	case "m", "minute", "minutes":
+	case "m", "min", "mins", "minute", "minutes":
 		d = -time.Duration(int(p)) * time.Minute
 	case "h", "hour", "hours":
 		d = -time.Duration(int(p)) * time.Hour

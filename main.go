@@ -43,6 +43,7 @@ var awsCommandFlags = []cli.Flag{
 
 var commandGet = cli.Command{
 	Name:      "get",
+	Usage:     "get log stream",
 	ArgsUsage: "log_group_name log_stream_name",
 	Action:    runGet,
 	Flags: append(awsCommandFlags, []cli.Flag{
@@ -62,7 +63,7 @@ var commandGet = cli.Command{
 			Name:  "s,start",
 			Value: "5m",
 			Usage: "`START` time"},
-		cli.StringFlag{Name: "e,end", Usage: "`End` time"},
+		cli.StringFlag{Name: "e,end", Usage: "`END` time"},
 		cli.BoolFlag{Name: "no-color", Usage: "Do not color output"},
 		//		cli.StringFlag{Name: "q,query", Usage: "JMESPath `QUERY` to use in filtering the response data"},
 	}...),
@@ -70,6 +71,7 @@ var commandGet = cli.Command{
 
 var commandListGroups = cli.Command{
 	Name:   "groups",
+	Usage:  "list log groups",
 	Action: runListGroups,
 	Flags: append(awsCommandFlags, []cli.Flag{
 		cli.StringFlag{
@@ -81,7 +83,7 @@ var commandListGroups = cli.Command{
 
 var commandListStreams = cli.Command{
 	Name:      "streams",
-	Usage:     "[command options] log_group_name",
+	Usage:     "list log stream",
 	ArgsUsage: "log_group_name",
 	Action:    runListStreams,
 	Flags: append(awsCommandFlags, []cli.Flag{
@@ -89,7 +91,7 @@ var commandListStreams = cli.Command{
 			Name:  "s,start",
 			Value: "1h",
 			Usage: "`START` time"},
-		cli.StringFlag{Name: "e,end", Usage: "`End` time"},
+		cli.StringFlag{Name: "e,end", Usage: "`END` time"},
 		cli.StringFlag{
 			Name:  "p,log-stream-prefix",
 			Usage: "List only stream matching the prefix"},
