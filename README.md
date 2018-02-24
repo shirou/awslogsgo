@@ -78,11 +78,10 @@ You can also specify `1h` or `3d`. If specify this, it means relative to current
 - d, day, days
 - w, week, weeks
 
+## Thanks
 
-
-# Bugs
-
-- [ ] `-w` is not work
+- awslogs https://github.com/jorgebastida/awslogs
+- cwlogs https://github.com/segmentio/cwlogs/
 
 # License
 

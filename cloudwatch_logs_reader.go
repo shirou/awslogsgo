@@ -6,11 +6,17 @@ import (
 
 	"github.com/aws/aws-sdk-go-v2/aws"
 	"github.com/aws/aws-sdk-go-v2/service/cloudwatchlogs"
+	"github.com/hashicorp/golang-lru"
 )
 
 const (
-	MaxEventsBuffer = 10000
+	maxEventsBuffer = 10000
+	maxEventsCache  = 100000
+	followSleepTime = 1 // SleepTime when watch is enabled
 )
+
+// When sleep
+var followStart = -time.Duration(3) * time.Minute
 
 // CloudwatchLogsReader is responsible for fetching logs for a particular log
 // group
@@ -22,6 +28,7 @@ type CloudwatchLogsReader struct {
 	end          time.Time
 	filter       string
 	streamPrefix string
+	eventCache   *lru.Cache
 }
 
 // NewCloudwatchLogsReader takes a group and optionally a stream prefix, start and
@@ -35,6 +42,11 @@ func NewCloudwatchLogsReader(config aws.Config,
 	if groupExists(config, group) == false {
 		return nil, fmt.Errorf("group %s is not exists", group)
 	}
+	cache, err := lru.New(maxEventsCache)
+	if err != nil {
+		return nil, err
+	}
+
 	reader := &CloudwatchLogsReader{
 		config:       config,
 		svc:          svc,
@@ -43,13 +55,14 @@ func NewCloudwatchLogsReader(config aws.Config,
 		end:          end,
 		filter:       filter,
 		streamPrefix: streamPrefix,
+		eventCache:   cache,
 	}
 
 	return reader, nil
 }
 
 func (reader *CloudwatchLogsReader) Stream(follow bool) (chan Event, error) {
-	stream := make(chan Event, MaxEventsBuffer)
+	stream := make(chan Event, maxEventsBuffer)
 
 	go reader.startStream(stream, follow)
 
@@ -70,26 +83,35 @@ func (reader *CloudwatchLogsReader) startStream(stream chan Event, follow bool) 
 		EndTime:        aws.Int64(aws.TimeUnixMilli(reader.end)),
 		LogGroupName:   aws.String(reader.logGroupName),
 		LogStreamNames: ss,
+		Interleaved:    aws.Bool(true),
 	}
 	if reader.filter != "" {
 		params.FilterPattern = aws.String(reader.filter)
 	}
 
+LOOP:
 	req := reader.svc.FilterLogEventsRequest(params)
 	p := req.Paginate()
 	for p.Next() {
 		page := p.CurrentPage()
-		if len(page.Events) == 0 && follow == false {
-			close(stream)
-			return
-		}
 		for _, e := range page.Events {
-			stream <- fromFilteredLogEvent(reader.logGroupName, e)
+			if _, ok := reader.eventCache.Peek(*e.EventId); !ok {
+				stream <- fromFilteredLogEvent(reader.logGroupName, e)
+				reader.eventCache.Add(*e.EventId, nil)
+			}
 		}
 	}
 	if err := p.Err(); err != nil {
 		fmt.Println(err)
 	}
+
+	if follow {
+		time.Sleep(followSleepTime)
+		params.StartTime = aws.Int64(aws.TimeUnixMilli(time.Now().Add(followStart)))
+		params.EndTime = aws.Int64(aws.TimeUnixMilli(time.Now()))
+		goto LOOP
+	}
+
 	close(stream)
 }
 

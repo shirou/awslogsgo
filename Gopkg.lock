@@ -26,7 +26,7 @@
     "service/cloudwatchlogs",
     "service/sts"
   ]
-  revision = "b577016e055b55e5765dcd5ab299bfcc54b038c0"
+  revision = "b8e7febd4b80c6517240e473410b54d4e63fed1d"
   version = "v2.0.0-preview.2"
 
 [[projects]]
@@ -34,6 +34,15 @@
   packages = ["."]
   revision = "32e4c1e6bc4e7d0d8451aa6b75200d19e37a536a"
   version = "v1.32.0"
+
+[[projects]]
+  branch = "master"
+  name = "github.com/hashicorp/golang-lru"
+  packages = [
+    ".",
+    "simplelru"
+  ]
+  revision = "0fb14efe8c47ae851c0034ed7a448854d3d34cf3"
 
 [[projects]]
   name = "github.com/jmespath/go-jmespath"
@@ -73,6 +82,6 @@
 [solve-meta]
   analyzer-name = "dep"
   analyzer-version = 1
-  inputs-digest = "e59456a8e5a9407d8bc5ff6419d71716bc8f32410c56a153fc65eb3b573c303c"
+  inputs-digest = "cff492360f0d690c3aa754b6bef55d87c86606bf2c97674b4f953f57abe0a12b"
   solver-name = "gps-cdcl"
   solver-version = 1
