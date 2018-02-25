@@ -9,3 +9,4 @@ build_all:
 
 release: build_all
 	ghr $(VERSION) ./dist
+	/bin/rm -rf dist
