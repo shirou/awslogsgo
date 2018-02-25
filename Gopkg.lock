@@ -26,7 +26,7 @@
     "service/cloudwatchlogs",
     "service/sts"
   ]
-  revision = "b8e7febd4b80c6517240e473410b54d4e63fed1d"
+  revision = "b577016e055b55e5765dcd5ab299bfcc54b038c0"
   version = "v2.0.0-preview.2"
 
 [[projects]]
