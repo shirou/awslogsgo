@@ -129,7 +129,7 @@ func runGet(c *cli.Context) error {
 	group := c.Args().Get(0)
 	streamPrefix := c.Args().Get(1)
 
-	ac, err := awsConfig()
+	ac, err := awsConfig(awsConfigArgs(c))
 	if err != nil {
 		return err
 	}
@@ -161,7 +161,7 @@ func runGet(c *cli.Context) error {
 func runListGroups(c *cli.Context) error {
 	prefix := c.String("p")
 
-	ac, err := awsConfig()
+	ac, err := awsConfig(awsConfigArgs(c))
 	if err != nil {
 		return err
 	}
@@ -181,7 +181,7 @@ func runListStreams(c *cli.Context) error {
 		return err
 	}
 
-	ac, err := awsConfig()
+	ac, err := awsConfig(awsConfigArgs(c))
 	if err != nil {
 		return err
 	}
