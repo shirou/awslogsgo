@@ -8,9 +8,6 @@ import (
 	"time"
 )
 
-// This files is comes from moby's code
-// https://github.com/moby/moby/blob/3a633a712c8bbb863fe7e57ec132dd87a9c4eff7/api/types/time/timestamp.go
-
 // These are additional predefined layouts for use in Time.Format and Time.Parse
 // with --since and --until parameters for `docker logs` and `docker events`
 const (
@@ -33,7 +30,7 @@ func parseTime(value string) (time.Time, error) {
 	}
 
 	switch value {
-	case "all":
+	case "all", "ALL":
 		return time.Unix(0, 0), nil
 	case "", "now":
 		return time.Now(), nil
@@ -41,6 +38,9 @@ func parseTime(value string) (time.Time, error) {
 
 	return getTimestamp(value, time.Now())
 }
+
+// This files is comes from moby's code
+// https://github.com/moby/moby/blob/3a633a712c8bbb863fe7e57ec132dd87a9c4eff7/api/types/time/timestamp.go
 
 // GetTimestamp tries to parse given string as golang duration,
 // then RFC3339 time and finally as a Unix timestamp. If

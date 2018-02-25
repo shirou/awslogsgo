@@ -11,6 +11,5 @@ func awsConfig() (aws.Config, error) {
 		return aws.Config{}, err
 	}
 
-	//	return &aws.Config{MaxRetries: aws.Int(10)}, nil
 	return cfg, err
 }
