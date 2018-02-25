@@ -4,6 +4,8 @@ A go port of [awslogs](https://github.com/jorgebastida/awslogs).
 
 This `aslogsgo` has almost same options to awslogs, but this is very fast!
 
+Note: currently, `github.com/aws/aws-sdk-go-v2` is not provided `pagenation` for release. You should go get manually, to build your environment. (`dep` is something broken)
+
 # usage
 
 ## List log groups
@@ -69,9 +71,9 @@ OPTIONS:
    --no-color                            Do not color output
 ```
 
-### date
+### Date
 
-You can also specify `1h` or `3d`. If specify this, it means relative to current time.
+You can also specify human readable strings such as `1h`, `3d` to set relative date.
 
 - m, min, mins, minute, minutes
 - h, hour, hours
