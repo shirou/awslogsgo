@@ -4,9 +4,7 @@ A go port of [awslogs](https://github.com/jorgebastida/awslogs).
 
 This `aslogsgo` has almost same options to awslogs, but this is very fast!
 
-Note: currently, `github.com/aws/aws-sdk-go-v2` is not provided `pagenation` for release. You should go get manually, to build your environment. (`dep` is something broken)
-
-# usage
+# Usage
 
 ## List log groups
 

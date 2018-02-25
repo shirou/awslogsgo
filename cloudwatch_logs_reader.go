@@ -12,11 +12,11 @@ import (
 const (
 	maxEventsBuffer = 10000
 	maxEventsCache  = 100000
-	followSleepTime = 1 // SleepTime when watch is enabled
+	watchSleepTime  = 1 // SleepTime when watch is enabled
 )
 
 // When sleep
-var followStart = -time.Duration(3) * time.Minute
+var watchStart = -time.Duration(3) * time.Minute
 
 // CloudwatchLogsReader is responsible for fetching logs for a particular log
 // group
@@ -40,7 +40,7 @@ func NewCloudwatchLogsReader(config aws.Config,
 
 	// check that group is exists
 	if groupExists(config, group) == false {
-		return nil, fmt.Errorf("group %s is not exists", group)
+		return nil, fmt.Errorf("group %s does not exists", group)
 	}
 	cache, err := lru.New(maxEventsCache)
 	if err != nil {
@@ -61,15 +61,15 @@ func NewCloudwatchLogsReader(config aws.Config,
 	return reader, nil
 }
 
-func (reader *CloudwatchLogsReader) Stream(follow bool) (chan Event, error) {
+func (reader *CloudwatchLogsReader) Stream(watch bool) (chan Event, error) {
 	stream := make(chan Event, maxEventsBuffer)
 
-	go reader.startStream(stream, follow)
+	go reader.startStream(stream, watch)
 
 	return stream, nil
 }
 
-func (reader *CloudwatchLogsReader) startStream(stream chan Event, follow bool) {
+func (reader *CloudwatchLogsReader) startStream(stream chan Event, watch bool) {
 	ss, err := ListStreams(reader.config,
 		reader.logGroupName, reader.streamPrefix,
 		reader.start, reader.end)
@@ -105,9 +105,9 @@ LOOP:
 		fmt.Println(err)
 	}
 
-	if follow {
-		time.Sleep(followSleepTime)
-		params.StartTime = aws.Int64(aws.TimeUnixMilli(time.Now().Add(followStart)))
+	if watch {
+		time.Sleep(watchSleepTime)
+		params.StartTime = aws.Int64(aws.TimeUnixMilli(time.Now().Add(watchStart)))
 		params.EndTime = aws.Int64(aws.TimeUnixMilli(time.Now()))
 		goto LOOP
 	}
