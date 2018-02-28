@@ -7,6 +7,8 @@ import (
 	"github.com/urfave/cli"
 )
 
+const VERSION = "0.0.3"
+
 type Args struct {
 	NoColor bool
 	Start   string
@@ -100,8 +102,9 @@ var commandListStreams = cli.Command{
 
 func main() {
 	app := cli.NewApp()
-	app.Name = "cloudlogs"
-	app.Usage = "CloudwatchLogs Reader"
+	app.Name = "awslogsgo"
+	app.Usage = "AWS Cloudwatch Logs Reader"
+	app.Version = VERSION
 	app.Commands = []cli.Command{
 		commandGet,
 		commandListGroups,
