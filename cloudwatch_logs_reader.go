@@ -78,6 +78,12 @@ func (reader *CloudwatchLogsReader) startStream(stream chan Event, watch bool) {
 		close(stream)
 		return
 	}
+
+	// FilterLogEventsInput can not use more than 100 streams.
+	if len(ss) > 100 {
+		ss = ss[0:99]
+	}
+
 	params := &cloudwatchlogs.FilterLogEventsInput{
 		StartTime:      aws.Int64(aws.TimeUnixMilli(reader.start)),
 		EndTime:        aws.Int64(aws.TimeUnixMilli(reader.end)),
