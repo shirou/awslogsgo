@@ -3,11 +3,14 @@ package main
 import (
 	"fmt"
 	"os"
+	"time"
 
 	"github.com/urfave/cli"
 )
 
-const VERSION = "0.0.3"
+const VERSION = "0.0.4"
+
+const callDeadLine = 10 * time.Second
 
 type Args struct {
 	NoColor bool

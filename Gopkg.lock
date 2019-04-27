@@ -2,7 +2,7 @@
 
 
 [[projects]]
-  digest = "1:449b3b77998930353ae2355a528443f83cfcd0a5111ded50d2f06a91ed2fbffa"
+  digest = "1:4c314d1acd9eca89c539be05fb8fb403a4ea988607e7aabc145dfb45d93c0636"
   name = "github.com/aws/aws-sdk-go-v2"
   packages = [
     "aws",
@@ -29,8 +29,8 @@
     "service/sts",
   ]
   pruneopts = "UT"
-  revision = "d52522b5f4b95591ff6528d7c54923951aadf099"
-  version = "v2.0.0-preview.5"
+  revision = "946751c824084162af83a0084acf059385f79664"
+  version = "v0.8.0"
 
 [[projects]]
   digest = "1:d15ee511aa0f56baacc1eb4c6b922fa1c03b38413b6be18166b996d82a0156ea"
@@ -44,11 +44,11 @@
   version = "v0.5.1"
 
 [[projects]]
-  digest = "1:e22af8c7518e1eab6f2eab2b7d7558927f816262586cd6ed9f349c97a6c285c4"
+  digest = "1:bb81097a5b62634f3e9fec1014657855610c82d19b9a40c17612e32651e35dca"
   name = "github.com/jmespath/go-jmespath"
   packages = ["."]
   pruneopts = "UT"
-  revision = "0b12d6b5"
+  revision = "c2b33e84"
 
 [[projects]]
   digest = "1:2fa7b0155cd54479a755c629de26f888a918e13f8857a2c442205d825368e084"

@@ -1,6 +1,7 @@
 package main
 
 import (
+	"context"
 	"fmt"
 	"time"
 
@@ -70,35 +71,25 @@ func (reader *CloudwatchLogsReader) Stream(watch bool) (chan Event, error) {
 }
 
 func (reader *CloudwatchLogsReader) startStream(stream chan Event, watch bool) {
-	ss, err := ListStreams(reader.config,
-		reader.logGroupName, reader.streamPrefix,
-		reader.start, reader.end)
-	if err != nil {
-		fmt.Println(err)
-		close(stream)
-		return
-	}
-
-	// FilterLogEventsInput can not use more than 100 streams.
-	if len(ss) > 100 {
-		ss = ss[0:99]
-	}
-
 	params := &cloudwatchlogs.FilterLogEventsInput{
-		StartTime:      aws.Int64(aws.TimeUnixMilli(reader.start)),
-		EndTime:        aws.Int64(aws.TimeUnixMilli(reader.end)),
-		LogGroupName:   aws.String(reader.logGroupName),
-		LogStreamNames: ss,
-		Interleaved:    aws.Bool(true),
+		StartTime:    aws.Int64(aws.TimeUnixMilli(reader.start)),
+		EndTime:      aws.Int64(aws.TimeUnixMilli(reader.end)),
+		LogGroupName: aws.String(reader.logGroupName),
+		// LogStreamNames: ss,
+		LogStreamNamePrefix: aws.String(reader.streamPrefix),
+		Interleaved:         aws.Bool(true),
 	}
 	if reader.filter != "" {
 		params.FilterPattern = aws.String(reader.filter)
 	}
 
+	ctx, cancel := context.WithTimeout(context.Background(), callDeadLine)
+	defer cancel()
+
 LOOP:
 	req := reader.svc.FilterLogEventsRequest(params)
 	p := req.Paginate()
-	for p.Next() {
+	for p.Next(ctx) {
 		page := p.CurrentPage()
 		for _, e := range page.Events {
 			if _, ok := reader.eventCache.Peek(*e.EventId); !ok {
@@ -126,8 +117,11 @@ func groupExists(config aws.Config, group string) bool {
 	describeLogGroupsInput := &cloudwatchlogs.DescribeLogGroupsInput{
 		LogGroupNamePrefix: aws.String(group),
 	}
+	ctx, cancel := context.WithTimeout(context.Background(), callDeadLine)
+	defer cancel()
+
 	req := svc.DescribeLogGroupsRequest(describeLogGroupsInput)
-	p, err := req.Send()
+	p, err := req.Send(ctx)
 	if err != nil {
 		return false
 	}

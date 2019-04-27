@@ -1,6 +1,7 @@
 package main
 
 import (
+	"context"
 	"fmt"
 	"time"
 
@@ -15,9 +16,12 @@ func ListGroup(config aws.Config, prefix string) error {
 		LogGroupNamePrefix: aws.String(prefix),
 	}
 
+	ctx, cancel := context.WithTimeout(context.Background(), callDeadLine)
+	defer cancel()
+
 	req := svc.DescribeLogGroupsRequest(describeLogGroupsInput)
 	p := req.Paginate()
-	for p.Next() {
+	for p.Next(ctx) {
 		page := p.CurrentPage()
 		if len(page.LogGroups) == 0 {
 			return fmt.Errorf("Could not find log group '%s'", prefix)
@@ -43,10 +47,13 @@ func ListStreams(config aws.Config, group, prefix string, start, end time.Time) 
 		describeLogStreamsInput.LogStreamNamePrefix = aws.String(prefix)
 	}
 
+	ctx, cancel := context.WithTimeout(context.Background(), callDeadLine)
+	defer cancel()
+
 	ret := make([]string, 0)
 	req := svc.DescribeLogStreamsRequest(describeLogStreamsInput)
 	p := req.Paginate()
-	for p.Next() {
+	for p.Next(ctx) {
 		page := p.CurrentPage()
 		if len(page.LogStreams) == 0 {
 			return nil, fmt.Errorf("Could not find log streams for %s, '%s'", group, prefix)
