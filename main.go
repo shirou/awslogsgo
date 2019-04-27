@@ -8,7 +8,7 @@ import (
 	"github.com/urfave/cli"
 )
 
-const VERSION = "0.0.4"
+const VERSION = "v0.0.5"
 
 const callDeadLine = 10 * time.Second
 
